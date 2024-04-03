@@ -7,21 +7,28 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Logo} from "../assets";
 import {FontAwesome} from "@expo/vector-icons";
 import { LineChart } from "react-native-gifted-charts";
-import { Button } from "react-native";
+import { AppContext } from "../context/AppContext";
 
-const Chart = ({temp, humi}) => {
-  // console.log(temp);
-  const [temperature, settemperature] = useState([...temp]);
-  const [humidity, sethumidity] = useState(humi);
-  const [isLoading, setisLoading] = useState(false);
+const Chart = () => {
+  const {temperature}=useContext(AppContext);
+  const {humidity} = useContext(AppContext);
+  const {extraTemp} = useContext(AppContext);
+  const {extraHumi} = useContext(AppContext);
   const [tempScale, settempScale] = useState(40);
+  const [isLoading, setisLoading] = useState(false);
+  useEffect(() => {
+    if (temperature && humidity && extraTemp && extraHumi) {
+      setisLoading(false);
+    }
+  }, [temperature, humidity, extraTemp, extraHumi]);
+
   return (
-   <View className="bg-white flex-1">
+    <View className="bg-white flex-1">
       <SafeAreaView>
         <View className="w-full flex-row items-center justify-between px-4 py-2 ">
           <Image source={Logo} className="w-12 h-12" resizeMode="contain" />
@@ -66,7 +73,7 @@ const Chart = ({temp, humi}) => {
                       <Text className="justify-between py-1 text-primaryText text-base font-semibold">
                         Temperature
                       </Text>
-                      {/* <View className="flex-row flex">
+                      <View className="flex-row flex">
                         <TouchableOpacity onPress={()=>settempScale(tempScale+10)} className="items-center justify-between" style={styles.zoomout}>
                           <Text className="font-bold text-base" >-</Text>
                         </TouchableOpacity> 
@@ -74,34 +81,29 @@ const Chart = ({temp, humi}) => {
                         <TouchableOpacity onPress={()=>settempScale(tempScale-10)} className="items-center justify-between" style={styles.zoomin}>
                           <Text className="font-bold text-base" >+</Text>
                         </TouchableOpacity>
-                      </View> */}
+                      </View>   
                       <LineChart
-                        maxValue={15}
-                        // onlyPositive={true}
+                        maxValue={
+                          Math.ceil(extraTemp.max) - Math.floor(extraTemp.min)
+                        }
                         data={[...temperature]}
                         height={250}
-                        yAxisOffset={30}
-                        // yAxisLabelTexts={[34, "$250", "$500", "$750"]}
-                        // noOfSections={2}
-                        // width={Dimensions.get("window").width}
+                        yAxisOffset={Math.floor(extraTemp.min)}
                         width={280}
                         showVerticalLines
                         spacing={tempScale}
+                        // spacing={10}
                         initialSpacing={20}
                         color1="skyblue"
-                        // color2="orange"
                         textColor1="green"
                         dataPointsHeight={6}
                         dataPointsWidth={6}
                         dataPointsColor1="blue"
-                        // dataPointsColor2="red"
-                        // textShiftY={-2}
-                        // textShiftX={-5}
                         textFontSize={13}
                         onFocusEnabled
                         scrollToEnd
-                        // interpolateMissingValues={false}
-                        // fromZeroValues={false}
+                        hideDataPoints={true}
+                        curved={true}
                       />
                     </View>
                     <View
@@ -112,11 +114,13 @@ const Chart = ({temp, humi}) => {
                         Humidity
                       </Text>
                       <LineChart
-                        maxValue={20}
+                        maxValue={
+                          Math.ceil(extraHumi.max) - Math.floor(extraHumi.min)
+                        }
                         // onlyPositive={true}
-                        data={humidity}
+                        data={[...humidity]}
                         height={250}
-                        yAxisOffset={45}
+                        yAxisOffset={Math.floor(extraHumi.min)}
                         // yAxisLabelTexts={[34, "$250", "$500", "$750"]}
                         // noOfSections={2}
                         // width={Dimensions.get("window").width}
@@ -134,6 +138,7 @@ const Chart = ({temp, humi}) => {
                         textFontSize={13}
                         onFocusEnabled
                         scrollToEnd
+                        curved
                         // interpolateMissingValues={false}
                         // fromZeroValues={false}
                       />

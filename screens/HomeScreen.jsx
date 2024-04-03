@@ -11,7 +11,7 @@ import {
   FlatList,
   StatusBar
 } from "react-native";
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {Logo} from "../assets"
@@ -31,6 +31,7 @@ import { collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, wh
 import { firestoreDB } from "../config/firebase.config";
 import { create } from "@mui/material/styles/createTransitions";
 import { color } from "@rneui/base";
+import { AppContext } from "../context/AppContext";
 const screenWidth = 220;
 
 
@@ -73,205 +74,17 @@ const formatDateTime=(timestamp)=>{
 
 
 
-const HomeScreen = ({showData}) => {
-  // const startOfDay = new Date();
-  // startOfDay.setHours(0, 0, 0, 0);
-  console.log(formatDateTime(1710732569000));
-  const startOfDay = new Date("2024-03-18");
-  startOfDay.setHours(0, 0, 0, 0);
-  console.log(showData);
-  const [temperature, settemperature] = useState([]);
-  const [humidity, sethumidity] = useState([]);
-  // const [showData, setshowData] = useState();
-  const [lastPoint, setlastPoint] = useState(startOfDay.getTime());
-  console.log(3);
+const HomeScreen = () => {
 
-  ///{value:null, datapoint:}//////////////////////////////////
-  //            INIT
-  ///////////////////////////////////////////
+  const {showData}=useContext(AppContext);
 
-  // useEffect(() => {
-  //   // const fetchData = async () => {
-  //     console.log("FB run");
-  //     const q = query(
-  //       collection(firestoreDB, getCurrentDate()),
-  //       orderBy("timeBySecond", "asc"),
-  //       where("timeBySecond", ">=", startOfDay.getTime())
-  //     );
-  //     getDocs(q).then((querySnapshot) => {
-  //       var tempArray = temperature;
-  //       var humiArray = humidity;
-  //       var lastPointTemp = lastPoint;
-  //       var showDataTemp = showData;
-  //       querySnapshot.forEach((doc) => {
-  //         /////// 1p-60000
-  //         //////  1d-864000000
-
-  //         while (lastPointTemp < doc.data().timeBySecond) {
-  //           if (doc.data().timeBySecond - lastPointTemp < 900000) {
-  //             // console.log("point value//////////////////");
-  //             tempArray.push({
-  //               value: doc.data().temperature,
-  //               dataPointText: String(doc.data().temperature),
-  //             });
-  //             humiArray.push({
-  //               value: doc.data().humidity,
-  //               dataPointText: String(doc.data().humidity),
-  //             });
-  //             showDataTemp = doc.data();
-  //             lastPointTemp = doc.data().timeBySecond;
-  //           } else {
-  //             // console.log("point null");
-  //             tempArray.push({
-  //               value: null,
-  //             });
-  //             humiArray.push({
-  //               value: null,
-  //             });
-  //             lastPointTemp = lastPointTemp + 600000;
-  //           }
-  //           // console.log(lastPointTemp);
-  //         }
-  //       });
-  //       // set useState
-  //       settemperature(tempArray);
-  //       sethumidity(humiArray);
-  //       setshowData(showDataTemp);
-  //       setlastPoint(lastPointTemp);
-  //     });
-  //   // };
-  //   // fetchData();
-  // }, []);
-
-  // useEffect(() => {
-  //   let isFirstLoad = true;
-  //   console.log('Get data');
-  //   const q = query(
-  //     // collection(firestoreDB, getCurrentDate()),
-  //     collection(firestoreDB, "2024-03-18"),
-  //     orderBy("timeBySecond", "asc"),
-  //     where("timeBySecond", ">=", startOfDay.getTime())
-  //   );
-  //   const unsuscribe = onSnapshot(q, (snapshot) => {
-  //     var tempArray = temperature;
-  //     var humiArray = humidity;
-  //     var lastPointTemp = lastPoint;
-  //     var showDataTemp = showData;
-  //     // console.log(lastPointTemp);
-  //     snapshot.docChanges().forEach((change) => {
-  //       if (change.type === "added" && !isFirstLoad) {
-  //         while (lastPointTemp < change.doc.data().timeBySecond) {
-  //           if (change.doc.data().timeBySecond - lastPointTemp < 900000) {
-  //             // console.log("point value//////////////////");
-  //             tempArray.push({
-  //               value: change.doc.data().temperature,
-  //               dataPointText: String(change.doc.data().temperature),
-  //             });
-  //             humiArray.push({
-  //               value: change.doc.data().humidity,
-  //               dataPointText: String(change.doc.data().humidity),
-  //             });
-  //             showDataTemp = change.doc.data();
-  //             lastPointTemp = change.doc.data().timeBySecond;
-  //           } else {
-  //             // console.log("point null");
-  //             tempArray.push({
-  //               value: null,
-  //             });
-  //             humiArray.push({
-  //               value: null,
-  //             });
-  //             lastPointTemp = lastPointTemp + 600000;
-  //           }
-  //         }
-  //       }
-  //       else if (isFirstLoad) {
-  //         while (lastPointTemp < change.doc.data().timeBySecond) {
-  //           if (change.doc.data().timeBySecond - lastPointTemp < 900000) {
-  //             // console.log("point value//////////////////");
-  //             tempArray.push({
-  //               value: change.doc.data().temperature,
-  //               dataPointText: String(change.doc.data().temperature),
-  //             });
-  //             humiArray.push({
-  //               value: change.doc.data().humidity,
-  //               dataPointText: String(change.doc.data().humidity),
-  //             });
-  //             showDataTemp = change.doc.data();
-  //             lastPointTemp = change.doc.data().timeBySecond;
-  //           } else {
-  //             // console.log("point null");
-  //             tempArray.push({
-  //               value: null,
-  //             });
-  //             humiArray.push({
-  //               value: null,
-  //             });
-  //             lastPointTemp = lastPointTemp + 600000;
-  //           }
-  //         }
-  //       }
-  //     });
-  //     ///set state
-  //     settemperature(tempArray);
-  //     sethumidity(humiArray);
-  //     setshowData(showDataTemp);
-  //     setlastPoint(lastPointTemp);
-  //     isFirstLoad = false;
-  //   });
-  //   return () => {
-  //     unsuscribe();
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   setshowData({
-  //     createAt: {nanoseconds: 712867000, seconds: 1710745256},
-  //     device: "unit-c-otaa-demo",
-  //     humidity: 99.1,
-  //     temperature: 100,
-  //     timeBySecond: 1710745256000,
-  //   });
-  //   settemperature([
-  //     {value: 34, dataPointText: "0"},
-  //     {value: 35, dataPointText: "10"},
-  //     {value: 34, dataPointText: "8"},
-  //     {value: 58, dataPointText: "58"},
-  //     {value: 56, dataPointText: "56"},
-  //     {value: 78, dataPointText: "78"},
-  //     {value: 74, dataPointText: "74"},
-  //     {value: 98, dataPointText: "98"},
-  //   ]);
-  //   // const interval = setInterval(() => {
-  //   //   // Thêm một phần tử vào cuối mảng
-  //   //   console.log('Run time');
-  //   //   settemperature((temperature) => [
-  //   //     ...temperature,
-  //   //     {
-  //   //       value: null,
-  //   //     },
-  //   //   ]);
-  //   // }, 6000); // 600000 milliseconds = 10 minutes
-
-  //   // return () => clearInterval(interval);
-  // }, []);
-
-  // const user = useSelector((state) => state.user.user);
-  // const navigation = useNavigation();
-  const [isLoading, setisLoading] = useState(false);
-  const data = [
-    {x: 1, y: 10},
-    {x: 2, y: 20},
-    {x: 3, y: 15},
-    {x: 4, y: 25},
-    {x: 5, y: 30},
-  ];
-  // const [loaded]=useFonts({
-  //   WorkSans_Bold:require('../assets/fonts/WorkSans-SemiBold.ttf')
-  // });
-  // if(!loaded){
-  //   return null;
-  // }
+  const [isLoading, setisLoading] = useState(true);
+  useEffect(() => {
+    // Kiểm tra xem showData có dữ liệu hay không
+    if (showData) {
+      setisLoading(false); // Nếu có dữ liệu, đặt isLoading = false
+    }
+  }, [showData]);
 
   return (
     <View className="bg-white flex-1">
@@ -311,8 +124,8 @@ const HomeScreen = ({showData}) => {
             </TouchableOpacity>
           </View>
           {isLoading ? (
-            <View className="w-full flex items-center justify-center">
-              <ActivityIndicator size={"large"} color={"#43C651"} />
+            <View className="w-full flex items-center justify-center justify-between">
+              <ActivityIndicator size={"large"} color={"#60a5fa"} />
             </View>
           ) : (
             <>
