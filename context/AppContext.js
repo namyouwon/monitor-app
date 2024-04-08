@@ -10,8 +10,30 @@ import {firestoreDB} from "../config/firebase.config";
 
 export const AppContext = createContext();
 
+function getCurrentDate() {
+  const today = new Date();
+  let year = today.getFullYear();
+  let month = today.getMonth() + 1;
+  let day = today.getDate();
+
+  // Thêm số 0 vào trước nếu cần thiết
+  if (month < 10) {
+    month = "0" + month;
+  }
+  if (day < 10) {
+    day = "0" + day;
+  }
+
+  // Định dạng theo yyyy-mm-dd
+  const formattedDate = year + "-" + month + "-" + day;
+
+  return formattedDate;
+}
+
 export const AppProvider = ({children})=>{
-    const startOfDay = new Date("2024-03-18");
+    const temp=["temperature","humidity","humidity"];
+    // const startOfDay = new Date("2024-03-18");
+    const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const [temperature, settemperature] = useState([]);
     const [humidity, sethumidity] = useState([]);
@@ -22,7 +44,7 @@ export const AppProvider = ({children})=>{
     useEffect(() => {
       let isFirstLoad = true;
       const q = query(
-        collection(firestoreDB, "2024-03-18"),
+        collection(firestoreDB, getCurrentDate()),
         orderBy("timeBySecond", "asc"),
         where("timeBySecond", ">=", startOfDay.getTime())
       );

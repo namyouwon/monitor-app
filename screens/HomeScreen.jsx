@@ -32,6 +32,10 @@ import { firestoreDB } from "../config/firebase.config";
 import { create } from "@mui/material/styles/createTransitions";
 import { color } from "@rneui/base";
 import { AppContext } from "../context/AppContext";
+// import CircularProgress from "react-native-circular-progress-indicator";
+import {DashedCircularIndicator} from "rn-dashed-circular-indicator";
+// import Animated from "react-native-reanimated";
+
 const screenWidth = 220;
 
 
@@ -74,31 +78,27 @@ const formatDateTime=(timestamp)=>{
 
 
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
 
   const {showData}=useContext(AppContext);
 
   const [isLoading, setisLoading] = useState(true);
   useEffect(() => {
-    // Kiểm tra xem showData có dữ liệu hay không
     if (showData) {
-      setisLoading(false); // Nếu có dữ liệu, đặt isLoading = false
+      setisLoading(false);
     }
   }, [showData]);
 
   return (
     <View className="bg-white flex-1">
       <SafeAreaView>
-        <View className="w-full flex-row items-center justify-between px-4 py-2 ">
+        {/* <View className="w-full flex-row items-center justify-between px-4 py-2 ">
           <TouchableOpacity className="w-12 h-12 rounded-full flex items-center justify-center">
             <Image source={Logo} className="w-12 h-12" resizeMode="cover" />
           </TouchableOpacity>
           <Text className="pl-3 text-primaryText text-xl font-semibold">
             Device
           </Text>
-          {/* <Text className="text-primaryText text-3xl font-semibold">
-            verlyn
-          </Text> */}
           <TouchableOpacity className="w-12 h-12 rounded-full border flex items-center justify-center">
             <Image
               source={{
@@ -108,11 +108,6 @@ const HomeScreen = () => {
               resizeMode="cover"
             />
           </TouchableOpacity>
-        </View>
-        {/* <View className="w-full flex-row items-center px-4 py-2 ">
-          <Text className="text-primaryText text-3xl font-semibold">
-            Station Home
-          </Text>
         </View> */}
         <View className="w-full">
           <View className="w-full flex-row items-center justify-between px-4">
@@ -136,6 +131,25 @@ const HomeScreen = () => {
                 <Text>PIN</Text>
                 </View>
               </View> */}
+              {/* <CircularProgress value={58} /> */}
+              {/* <Animated.View
+                style={{
+                  width: 100,
+                  height: 100,
+                  backgroundColor: "violet",
+                }}
+              /> */}
+              <View className="flex justify-between items-center pt-4 pb-10">
+                <DashedCircularIndicator
+                  selectedValue={76}
+                  maxValue={100}
+                  radius={125}
+                  textColor="#0f4fff"
+                  activeStrokeColor="#0f4fff"
+                  withGradient
+                  label={"Battery"}
+                />
+              </View>
               <View className="flex justify-between items-center flex-row pl-4 pb-4 ">
                 <AQIComponent showData={showData} type={1} />
                 <AQIComponent showData={showData} type={2} />

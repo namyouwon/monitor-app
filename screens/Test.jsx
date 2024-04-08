@@ -13,6 +13,7 @@ import HomeScreen from "./HomeScreen";
 import Control from "./Control";
 import Chart from "./Chart";
 import { AppProvider } from "../context/AppContext";
+import Setting from "./Setting";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +31,8 @@ const Test = () => {
               iconName = focused ? "grid" : "grid-outline";
             } else if (route.name === "Chart") {
               iconName = focused ? "analytics" : "analytics-outline";
+            } else if (route.name === "Setting") {
+              iconName = focused ? "settings" : "settings-outline";
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -40,6 +43,7 @@ const Test = () => {
         <Tab.Screen name="Monitor" component={HomeScreen} />
         <Tab.Screen name="Chart" component={Chart} />
         <Tab.Screen name="Control" component={Control} />
+        <Tab.Screen name="Setting" component={Setting} />
       </Tab.Navigator>
     </AppProvider>
   );
